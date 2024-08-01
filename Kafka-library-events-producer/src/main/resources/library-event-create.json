@@ -1,0 +1,9 @@
+{
+  "libraryEventId": null,
+  "libraryEventType": "NEW",
+  "book": {
+    "bookId": 123,
+    "bookName": "Some Book",
+    "bookAuthor": "Some Author"
+  }
+}
