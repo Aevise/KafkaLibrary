@@ -11,14 +11,13 @@ import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 @RestController
 @Slf4j
 public class LibraryEventsController {
-
     private static final String LIBRARY_EVENT = "/v1/libraryEvent";
 
     @PostMapping(LIBRARY_EVENT)
     public ResponseEntity<LibraryEvent> postLibraryEvent(
             @RequestBody LibraryEvent libraryEvent
     ){
-        log.info("library event : {}", libraryEvent);
+        log.info("Library Event : {}", libraryEvent);
         //invoke kafka producer
 
         return ResponseEntity
