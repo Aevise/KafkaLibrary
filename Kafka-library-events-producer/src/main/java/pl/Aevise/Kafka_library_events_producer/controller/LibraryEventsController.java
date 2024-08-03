@@ -14,7 +14,7 @@ public class LibraryEventsController {
 
     private static final String LIBRARY_EVENT = "/v1/libraryEvent";
 
-    @PostMapping("/v1/libraryEvent")
+    @PostMapping(LIBRARY_EVENT)
     public ResponseEntity<LibraryEvent> postLibraryEvent(
             @RequestBody LibraryEvent libraryEvent
     ){
