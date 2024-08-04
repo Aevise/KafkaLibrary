@@ -32,8 +32,8 @@ public class LibraryEventsController {
 //        libraryEventsProducer.asynchronousSendLibraryEvent(libraryEvent);
 //        libraryEventsProducer.synchronousSendLibraryEvent(libraryEvent);
 
-//        libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(libraryEvent);
-        libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(libraryEvent);
+        libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(libraryEvent);
+//        libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(libraryEvent);
 
         log.info("After sending Library Event : ");
         return ResponseEntity
