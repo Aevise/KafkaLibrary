@@ -45,6 +45,6 @@ public class LibraryEventsProducer {
     }
 
     private void handleFailure(Integer key, String value, Throwable throwable) {
-        log.error("Error sending message. Exception: [{}]", throwable.getMessage());
+        log.error("Error sending message. Exception: [{}]", throwable.getMessage(), throwable);
     }
 }
