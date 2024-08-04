@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.producer.LibraryEventsProducer;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -22,11 +25,12 @@ public class LibraryEventsController {
     @PostMapping(LIBRARY_EVENT)
     public ResponseEntity<LibraryEvent> postLibraryEvent(
             @RequestBody LibraryEvent libraryEvent
-    ) throws JsonProcessingException {
+    ) throws JsonProcessingException, ExecutionException, InterruptedException, TimeoutException {
         log.info("Library Event : {}", libraryEvent);
 
         //invoke kafka producer
         libraryEventsProducer.asynchronousSendLibraryEvent(libraryEvent);
+//        libraryEventsProducer.synchronousSendLibraryEvent(libraryEvent);
 
         log.info("After sending Library Event : ");
         return ResponseEntity

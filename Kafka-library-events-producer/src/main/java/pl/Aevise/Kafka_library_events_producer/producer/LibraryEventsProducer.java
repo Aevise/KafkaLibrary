@@ -2,7 +2,6 @@ package pl.Aevise.Kafka_library_events_producer.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +11,9 @@ import org.springframework.stereotype.Component;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
@@ -24,10 +26,12 @@ public class LibraryEventsProducer {
     private final KafkaTemplate<Integer, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    public CompletableFuture<SendResult<Integer, String>> sendLibraryEvent(LibraryEvent libraryEvent) throws JsonProcessingException {
+    public CompletableFuture<SendResult<Integer, String>> asynchronousSendLibraryEvent(LibraryEvent libraryEvent) throws JsonProcessingException {
         Integer key = libraryEvent.libraryEventId();
         String value = objectMapper.writeValueAsString(libraryEvent);
 
+        //1. blocking call - get metadata about Kafka cluster
+        //2. send message to Kafka cluster
         var completableFuture = kafkaTemplate.send(topic, key, value);
         return completableFuture
                 .whenComplete((sendResult, throwable) -> {
@@ -37,6 +41,19 @@ public class LibraryEventsProducer {
                         handleSuccess(key, value, sendResult);
                     }
                 });
+    }
+
+    public SendResult<Integer, String> synchronousSendLibraryEvent(LibraryEvent libraryEvent)
+            throws JsonProcessingException, ExecutionException, InterruptedException, TimeoutException {
+        Integer key = libraryEvent.libraryEventId();
+        String value = objectMapper.writeValueAsString(libraryEvent);
+
+        //1. blocking call - get metadata about Kafka cluster
+        //2. block and wait until message is sent to Kafka cluster
+        var sendResult = kafkaTemplate.send(topic, key, value).get(3, TimeUnit.SECONDS);
+        handleSuccess(key, value, sendResult);
+
+        return sendResult;
     }
 
     private void handleSuccess(Integer key, String value, SendResult<Integer, String> sendResult) {
