@@ -29,8 +29,11 @@ public class LibraryEventsController {
         log.info("Library Event : {}", libraryEvent);
 
         //invoke kafka producer
-        libraryEventsProducer.asynchronousSendLibraryEvent(libraryEvent);
+//        libraryEventsProducer.asynchronousSendLibraryEvent(libraryEvent);
 //        libraryEventsProducer.synchronousSendLibraryEvent(libraryEvent);
+
+//        libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(libraryEvent);
+        libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(libraryEvent);
 
         log.info("After sending Library Event : ");
         return ResponseEntity
