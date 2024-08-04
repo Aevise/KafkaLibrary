@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 @RestController
 @AllArgsConstructor
 public class LibraryEventsController {
-    private static final String LIBRARY_EVENT = "/v1/libraryEvent";
+    public static final String LIBRARY_EVENT = "/v1/libraryEvent";
     private final LibraryEventsProducer libraryEventsProducer;
 
 
