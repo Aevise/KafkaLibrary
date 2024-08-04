@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.TestPropertySource;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.util.POJOFixtures;
 
@@ -13,6 +15,13 @@ import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsCo
 import static pl.Aevise.Kafka_library_events_producer.util.POJOFixtures.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EmbeddedKafka(topics = "library-events")
+@TestPropertySource(
+        properties = {
+                "spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}",
+                "spring.kafka.admin.properties.bootstrap-servers=${spring.embedded.kafka.brokers}"
+        }
+)
 class LibraryEventsControllerTest {
 
     @Autowired
