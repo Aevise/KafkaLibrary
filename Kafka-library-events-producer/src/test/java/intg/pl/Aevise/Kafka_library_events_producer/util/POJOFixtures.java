@@ -1,7 +1,5 @@
 package pl.Aevise.Kafka_library_events_producer.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.Aevise.Kafka_library_events_producer.domain.Book;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEventType;
