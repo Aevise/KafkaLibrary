@@ -3,6 +3,7 @@ package pl.Aevise.Kafka_library_events_producer.producer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -14,15 +15,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LibraryEventsProducer {
 
     @Value("${spring.kafka.topic}")
-    public static String topic;
+    public String topic;
 
     private final KafkaTemplate<Integer, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
-
 
     public CompletableFuture<SendResult<Integer, String>> sendLibraryEvent(LibraryEvent libraryEvent) throws JsonProcessingException {
         Integer key = libraryEvent.libraryEventId();
