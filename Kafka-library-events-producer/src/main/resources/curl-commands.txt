@@ -1,25 +1,31 @@
 POST WITH-NULL-LIBRARY-EVENT-ID
 ---------------------
-curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X POST http://localhost:8080/v1/libraryEvent
+curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X POST http://localhost:8080/v1/async/libraryEvent
 
+curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X POST http://localhost:8080/v1/sync/libraryEvent
 
 PUT WITH ID - 1
 --------------
-curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/libraryEvent
+curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
+curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
 
-curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/libraryEvent
+curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
+curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
 
 PUT WITH ID
 ---------------------
-curl -i -d "{\"libraryEventId\":123,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/libraryEvent
+curl -i -d "{\"libraryEventId\":123,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
+curl -i -d "{\"libraryEventId\":999,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
+curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
 
-curl -i -d "{\"libraryEventId\":999,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/libraryEvent
-
-curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/libraryEvent
-
+curl -i -d "{\"libraryEventId\":123,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
+curl -i -d "{\"libraryEventId\":999,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
+curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
 
 PUT WITHOUT ID
 ---------------------
-curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/libraryEvent
+curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
+
+curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
 
 ./kafka-topics.sh --create --topic library-events.DLT --replication-factor 1 --partitions 4 --bootstrap-server localhost:9092

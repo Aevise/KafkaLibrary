@@ -18,24 +18,37 @@ import java.util.concurrent.TimeoutException;
 @RestController
 @AllArgsConstructor
 public class LibraryEventsController {
-    public static final String LIBRARY_EVENT = "/v1/libraryEvent";
+    public static final String LIBRARY_EVENT_SYNC = "/v1/sync/libraryEvent";
+    public static final String LIBRARY_EVENT_ASYNC = "/v1/async/libraryEvent";
     private final LibraryEventsProducer libraryEventsProducer;
 
 
-    @PostMapping(LIBRARY_EVENT)
-    public ResponseEntity<LibraryEvent> postLibraryEvent(
+    @PostMapping(LIBRARY_EVENT_ASYNC)
+    public ResponseEntity<LibraryEvent> postLibraryEventAsync(
+            @RequestBody LibraryEvent libraryEvent
+    ) throws JsonProcessingException{
+        log.info("Library Event : {}", libraryEvent);
+
+        //invoke kafka producer
+//        libraryEventsProducer.asynchronousSendLibraryEvent(libraryEvent);
+        libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(libraryEvent);
+
+        log.info("After sending Library Event : ");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(libraryEvent);
+    }
+
+    @PostMapping(LIBRARY_EVENT_SYNC)
+    public ResponseEntity<LibraryEvent> postLibraryEventSync(
             @RequestBody LibraryEvent libraryEvent
     ) throws JsonProcessingException, ExecutionException, InterruptedException, TimeoutException {
         log.info("Library Event : {}", libraryEvent);
 
         //invoke kafka producer
-//        libraryEventsProducer.asynchronousSendLibraryEvent(libraryEvent);
 //        libraryEventsProducer.synchronousSendLibraryEvent(libraryEvent);
+        libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(libraryEvent);
 
-        libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(libraryEvent);
-//        libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(libraryEvent);
-
-        log.info("After sending Library Event : ");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(libraryEvent);
