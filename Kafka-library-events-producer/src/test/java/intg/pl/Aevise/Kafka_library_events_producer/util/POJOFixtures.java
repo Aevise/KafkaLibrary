@@ -55,12 +55,4 @@ public class POJOFixtures {
                 bookRecordWithInvalidValue()
         );
     }
-
-    public static LibraryEvent parseLibraryEventRecord(ObjectMapper objectMapper, String json) {
-        try {
-            return objectMapper.readValue(json, LibraryEvent.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
