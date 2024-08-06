@@ -1,6 +1,7 @@
 package pl.Aevise.Kafka_library_events_producer.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class LibraryEventsController {
 
     @PostMapping(LIBRARY_EVENT_ASYNC)
     public ResponseEntity<LibraryEvent> postLibraryEventAsync(
-            @RequestBody LibraryEvent libraryEvent
+            @Valid @RequestBody LibraryEvent libraryEvent
     ) throws JsonProcessingException{
         log.info("Library Event : {}", libraryEvent);
 
@@ -41,7 +42,7 @@ public class LibraryEventsController {
 
     @PostMapping(LIBRARY_EVENT_SYNC)
     public ResponseEntity<LibraryEvent> postLibraryEventSync(
-            @RequestBody LibraryEvent libraryEvent
+            @Valid @RequestBody LibraryEvent libraryEvent
     ) throws JsonProcessingException, ExecutionException, InterruptedException, TimeoutException {
         log.info("Library Event : {}", libraryEvent);
 
