@@ -14,6 +14,7 @@ import pl.Aevise.Kafka_library_events_producer.producer.LibraryEventsProducer;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsController.LIBRARY_EVENT_ASYNC;
 import static pl.Aevise.Kafka_library_events_producer.util.POJOFixtures.bookRecordWithInvalidValue;
@@ -50,9 +51,10 @@ class LibraryEventsControllerMockMvcTest {
     }
 
     @Test
-    void checkThatLibraryEventWithInvalidDataIsNotSentAsync() throws Exception {
+    void checkThatExceptionIsThrownWhenTryingToSendInvalidDataAsync() throws Exception {
         //given
         String json = objectMapper.writeValueAsString(bookRecordWithInvalidValue());
+        String expectedErrorMessage = "book - must not be null";
 
         //when
         when(libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(isA(LibraryEvent.class)))
@@ -65,14 +67,44 @@ class LibraryEventsControllerMockMvcTest {
 
         //then
         result.andExpect(status().is4xxClientError());
+        result.andExpect(content().string(expectedErrorMessage));
     }
 
     @Test
-    void postLibraryEventSync() {
+    void checkThatLibraryEventWithValidDataIsSentSuccessfullySync() throws Exception {
         //given
+        String json = objectMapper.writeValueAsString(libraryEventRecord());
 
         //when
+        when(libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(isA(LibraryEvent.class)))
+                .thenReturn(null);
+
+        ResultActions result = mockMvc.
+                perform(MockMvcRequestBuilders.post(LIBRARY_EVENT_ASYNC)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON));
 
         //then
+        result.andExpect(status().isCreated());
+    }
+
+    @Test
+    void checkThatExceptionIsThrownWhenTryingToSendInvalidDataSync() throws Exception {
+        //given
+        String json = objectMapper.writeValueAsString(bookRecordWithInvalidValue());
+        String expectedErrorMessage = "book - must not be null";
+
+        //when
+        when(libraryEventsProducer.synchronousSendLibraryEventWithProducerRecord(isA(LibraryEvent.class)))
+                .thenReturn(null);
+
+        ResultActions result = mockMvc.
+                perform(MockMvcRequestBuilders.post(LIBRARY_EVENT_ASYNC)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        result.andExpect(status().is4xxClientError());
+        result.andExpect(content().string(expectedErrorMessage));
     }
 }
