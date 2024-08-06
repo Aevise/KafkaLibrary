@@ -6,11 +6,11 @@ curl -i -d "{\"libraryEventId\":null,\"libraryEventType\":\"NEW\",\"book\":{\"bo
 
 PUT WITH ID - 1
 --------------
-curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
-curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
+curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
+curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/async/libraryEvent
 
-curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
-curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"NEW\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
+curl -i -d "{\"libraryEventId\":1,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
+curl -i -d "{\"libraryEventId\":2,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book 2.X\",\"bookAuthor\":\"Random Author\"}}" -H "Content-Type: application/json" -X PUT http://localhost:8080/v1/sync/libraryEvent
 
 PUT WITH ID
 ---------------------
