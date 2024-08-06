@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.Aevise.Kafka_library_events_producer.controller.exception.InvalidBookData;
+import pl.Aevise.Kafka_library_events_producer.controller.exceptions.InvalidBookData;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEventType;
 import pl.Aevise.Kafka_library_events_producer.producer.LibraryEventsProducer;
