@@ -28,7 +28,7 @@ public class LibraryEventsControllerAdvice {
     }
 
     @ExceptionHandler(InvalidBookData.class)
-    public ResponseEntity<?> handleException(InvalidBookData e){
+    public ResponseEntity<?> handleException(InvalidBookData e) {
         log.error("Error message : " + e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide the correct Library Event. " + e.getMessage());

@@ -24,11 +24,10 @@ import java.util.concurrent.TimeoutException;
 @RequiredArgsConstructor
 public class LibraryEventsProducer {
 
-    @Value("${spring.kafka.topic}")
-    public String topic;
-
     private final KafkaTemplate<Integer, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    @Value("${spring.kafka.topic}")
+    public String topic;
 
     public CompletableFuture<SendResult<Integer, String>> asynchronousSendLibraryEvent(LibraryEvent libraryEvent) throws JsonProcessingException {
         Integer key = libraryEvent.libraryEventId();

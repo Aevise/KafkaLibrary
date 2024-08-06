@@ -15,7 +15,6 @@ import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEventType;
 import pl.Aevise.Kafka_library_events_producer.producer.LibraryEventsProducer;
 
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -27,6 +26,15 @@ public class LibraryEventsController {
     public static final String LIBRARY_EVENT_ASYNC = "/v1/async/libraryEvent";
     private final LibraryEventsProducer libraryEventsProducer;
 
+    private static void validateLibraryUpdateEvent(LibraryEvent libraryEvent) {
+        if (libraryEvent.libraryEventId() == null) {
+            throw new InvalidBookData("Library event Id must not be null");
+        }
+
+        if (!libraryEvent.libraryEventType().equals(LibraryEventType.UPDATE)) {
+            throw new InvalidBookData("Library event type must be of type: " + LibraryEventType.UPDATE);
+        }
+    }
 
     @PostMapping(LIBRARY_EVENT_ASYNC)
     public ResponseEntity<LibraryEvent> postLibraryEventAsync(
@@ -75,15 +83,5 @@ public class LibraryEventsController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(libraryEvent);
-    }
-
-    private static void validateLibraryUpdateEvent(LibraryEvent libraryEvent) {
-        if (libraryEvent.libraryEventId() == null) {
-            throw new InvalidBookData("Library event Id must not be null");
-        }
-
-        if (!libraryEvent.libraryEventType().equals(LibraryEventType.UPDATE)) {
-            throw new InvalidBookData("Library event type must be of type: " + LibraryEventType.UPDATE);
-        }
     }
 }
