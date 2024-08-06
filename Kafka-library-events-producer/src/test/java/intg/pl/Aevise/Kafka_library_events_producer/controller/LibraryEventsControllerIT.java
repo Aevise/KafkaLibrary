@@ -18,7 +18,7 @@ import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsCo
 import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsController.LIBRARY_EVENT_SYNC;
 import static pl.Aevise.Kafka_library_events_producer.util.POJOFixtures.libraryEventRecord;
 
-class LibraryEventsControllerTest extends AbstractKafkaITConfiguration {
+class LibraryEventsControllerIT extends AbstractKafkaITConfiguration {
 
     @Autowired
     private TestRestTemplate restTemplate;
