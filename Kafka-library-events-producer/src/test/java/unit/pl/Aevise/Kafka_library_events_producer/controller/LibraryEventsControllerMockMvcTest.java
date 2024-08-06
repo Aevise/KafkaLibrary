@@ -16,6 +16,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsController.LIBRARY_EVENT_ASYNC;
+import static pl.Aevise.Kafka_library_events_producer.util.POJOFixtures.bookRecordWithInvalidValue;
 import static pl.Aevise.Kafka_library_events_producer.util.POJOFixtures.libraryEventRecord;
 
 @WebMvcTest(LibraryEventsController.class)
@@ -31,7 +32,7 @@ class LibraryEventsControllerMockMvcTest {
     LibraryEventsProducer libraryEventsProducer;
 
     @Test
-    void checkThatLibraryEventIsSentSuccessfullyAsync() throws Exception {
+    void checkThatLibraryEventWithValidDataIsSentSuccessfullyAsync() throws Exception {
         //given
         String json = objectMapper.writeValueAsString(libraryEventRecord());
 
@@ -46,6 +47,24 @@ class LibraryEventsControllerMockMvcTest {
 
         //then
         result.andExpect(status().isCreated());
+    }
+
+    @Test
+    void checkThatLibraryEventWithInvalidDataIsNotSentAsync() throws Exception {
+        //given
+        String json = objectMapper.writeValueAsString(bookRecordWithInvalidValue());
+
+        //when
+        when(libraryEventsProducer.asynchronousSendLibraryEventWithProducerRecord(isA(LibraryEvent.class)))
+                .thenReturn(null);
+
+        ResultActions result = mockMvc.
+                perform(MockMvcRequestBuilders.post(LIBRARY_EVENT_ASYNC)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        result.andExpect(status().is4xxClientError());
     }
 
     @Test
