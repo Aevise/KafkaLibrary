@@ -1,22 +1,17 @@
 package pl.Aevise.Kafka_library_events_producer.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import pl.Aevise.Kafka_library_events_producer.configuration.DefaultAbstractKafkaITConfiguration;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.util.TestUtils;
 
 import java.time.Duration;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsController.LIBRARY_EVENT_ASYNC;
