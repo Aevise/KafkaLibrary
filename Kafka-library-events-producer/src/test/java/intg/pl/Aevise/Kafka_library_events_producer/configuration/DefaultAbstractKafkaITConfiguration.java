@@ -24,25 +24,31 @@ import java.util.HashMap;
                 "spring.kafka.admin.properties.bootstrap-servers=${spring.embedded.kafka.brokers}"
         }
 )
-public abstract class AbstractKafkaITConfiguration {
+public abstract class DefaultAbstractKafkaITConfiguration {
 
-        @Autowired
-        protected EmbeddedKafkaBroker embeddedKafkaBroker;
-        protected Consumer<Integer, String> consumer;
+    @Autowired
+    protected EmbeddedKafkaBroker embeddedKafkaBroker;
+    protected Consumer<Integer, String> consumer;
 
-        @BeforeEach
-        void setUp(){
-                var config = new HashMap<>(KafkaTestUtils.consumerProps("group1", "true", embeddedKafkaBroker));
-                config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+    @BeforeEach
+    void setUp() {
+        setUpKafkaBroker();
+    }
 
-                consumer = new DefaultKafkaConsumerFactory<>(config, new IntegerDeserializer(), new StringDeserializer())
-                        .createConsumer();
+    @AfterEach
+    void tearDown(){
+        consumer.close();
+    }
 
-                embeddedKafkaBroker.consumeFromAllEmbeddedTopics(consumer);
-        }
+    private void setUpKafkaBroker(){
+        var config = new HashMap<>(KafkaTestUtils.consumerProps("group1", "true", embeddedKafkaBroker));
+        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
-        @AfterEach
-        void tearDown(){
-               consumer.close();
-        }
+        consumer = new DefaultKafkaConsumerFactory<>(config, new IntegerDeserializer(), new StringDeserializer())
+                .createConsumer();
+
+        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(consumer);
+    }
+
+
 }
