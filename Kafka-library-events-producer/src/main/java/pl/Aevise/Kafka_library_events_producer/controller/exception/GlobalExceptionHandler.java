@@ -1,4 +1,4 @@
-package pl.Aevise.Kafka_library_events_producer.controller.controllerAdvice;
+package pl.Aevise.Kafka_library_events_producer.controller.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Slf4j
-public class LibraryEventsControllerAdvice {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleException(MethodArgumentNotValidException e) {
