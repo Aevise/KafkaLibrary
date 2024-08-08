@@ -10,8 +10,9 @@ import pl.Aevise.Kafka_library_events_producer.controller.exceptions.InvalidBook
 
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+
 @Slf4j
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
