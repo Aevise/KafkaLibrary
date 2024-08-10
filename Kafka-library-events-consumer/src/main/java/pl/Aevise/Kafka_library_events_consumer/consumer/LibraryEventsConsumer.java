@@ -1,6 +1,7 @@
 package pl.Aevise.Kafka_library_events_consumer.consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,8 @@ import pl.Aevise.Kafka_library_events_consumer.business.LibraryEventsService;
 
 @Component
 @Slf4j
+@AllArgsConstructor
 public class LibraryEventsConsumer {
-    @Autowired
     private LibraryEventsService libraryEventsService;
 
     @KafkaListener(
