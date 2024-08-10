@@ -1,8 +1,6 @@
 package pl.Aevise.Kafka_library_events_consumer.infrastructure.db.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import pl.Aevise.Kafka_library_events_consumer.domain.LibraryEventType;
 
