@@ -13,11 +13,11 @@ import org.springframework.test.context.TestPropertySource;
 @EmbeddedKafka(topics = "library-events")
 @TestPropertySource(
         properties = {
-                "spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}",
+                "spring.kafka.consumer.bootstrap-servers=${spring.embedded.kafka.brokers}",
                 "spring.kafka.admin.properties.bootstrap-servers=${spring.embedded.kafka.brokers}"
         }
 )
-public abstract class CustomAbstractKafkaITConfiguration {
+public abstract class CustomAbstractKafkaConsumerITConfiguration {
 
     @Autowired
     protected EmbeddedKafkaBroker embeddedKafkaBroker;

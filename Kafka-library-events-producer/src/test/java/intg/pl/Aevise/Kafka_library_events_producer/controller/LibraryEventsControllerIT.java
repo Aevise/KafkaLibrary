@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import pl.Aevise.Kafka_library_events_producer.configuration.DefaultAbstractKafkaITConfiguration;
+import pl.Aevise.Kafka_library_events_producer.configuration.DefaultAbstractKafkaConsumerITConfiguration;
 import pl.Aevise.Kafka_library_events_producer.domain.LibraryEvent;
 import pl.Aevise.Kafka_library_events_producer.util.TestUtils;
 
@@ -18,7 +18,7 @@ import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsCo
 import static pl.Aevise.Kafka_library_events_producer.controller.LibraryEventsController.LIBRARY_EVENT_SYNC;
 import static pl.Aevise.Kafka_library_events_producer.util.POJOFixtures.libraryEventRecord;
 
-class LibraryEventsControllerIT extends DefaultAbstractKafkaITConfiguration {
+class LibraryEventsControllerIT extends DefaultAbstractKafkaConsumerITConfiguration {
 
     @Autowired
     private TestRestTemplate restTemplate;

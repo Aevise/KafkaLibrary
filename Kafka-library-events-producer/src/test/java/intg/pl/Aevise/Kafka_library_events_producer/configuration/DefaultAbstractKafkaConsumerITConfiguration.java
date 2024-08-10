@@ -24,7 +24,7 @@ import java.util.HashMap;
                 "spring.kafka.admin.properties.bootstrap-servers=${spring.embedded.kafka.brokers}"
         }
 )
-public abstract class DefaultAbstractKafkaITConfiguration {
+public abstract class DefaultAbstractKafkaConsumerITConfiguration {
 
     @Autowired
     protected EmbeddedKafkaBroker embeddedKafkaBroker;
