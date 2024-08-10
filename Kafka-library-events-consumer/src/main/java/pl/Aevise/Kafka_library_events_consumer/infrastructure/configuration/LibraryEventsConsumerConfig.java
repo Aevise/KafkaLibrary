@@ -1,4 +1,4 @@
-package pl.Aevise.Kafka_library_events_consumer.config;
+package pl.Aevise.Kafka_library_events_consumer.infrastructure.configuration;
 
 import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
