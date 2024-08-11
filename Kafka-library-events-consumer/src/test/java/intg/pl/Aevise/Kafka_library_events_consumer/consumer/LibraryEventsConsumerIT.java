@@ -100,4 +100,21 @@ class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguratio
         assertEquals(newBook.getBookName(), libraryEventEntity.getBook().getBookName());
         assertEquals(newBook.getBookAuthor(), libraryEventEntity.getBook().getBookAuthor());
     }
+
+    @Test
+    public void publishUpdateLibraryEventWithoutLibraryEvent() throws JsonProcessingException, ExecutionException, InterruptedException {
+        //given
+        String bookId = "123";
+        String json = "{\"libraryEventId\":null,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":" + bookId + ",\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}";
+
+        //when
+        kafkaTemplate.sendDefault(json).get();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        latch.await(5, TimeUnit.SECONDS);
+
+        //then
+        verify(libraryEventsConsumerSpy, times(3)).consumeRecord(isA(ConsumerRecord.class));
+        verify(libraryEventsServiceSpy, times(3)).processLibraryEvent(isA(ConsumerRecord.class));
+    }
 }
