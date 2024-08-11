@@ -2,5 +2,6 @@ package pl.Aevise.Kafka_library_events_consumer.infrastructure.configuration.uti
 
 public enum RecordStatus {
     RETRY,
-    DEAD
+    DEAD,
+    SUCCESS
 }
