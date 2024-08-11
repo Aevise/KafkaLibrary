@@ -114,7 +114,7 @@ class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguratio
         latch.await(5, TimeUnit.SECONDS);
 
         //then
-        verify(libraryEventsConsumerSpy, times(3)).consumeRecord(isA(ConsumerRecord.class));
-        verify(libraryEventsServiceSpy, times(3)).processLibraryEvent(isA(ConsumerRecord.class));
+        verify(libraryEventsConsumerSpy, times(1)).consumeRecord(isA(ConsumerRecord.class));
+        verify(libraryEventsServiceSpy, times(1)).processLibraryEvent(isA(ConsumerRecord.class));
     }
 }
