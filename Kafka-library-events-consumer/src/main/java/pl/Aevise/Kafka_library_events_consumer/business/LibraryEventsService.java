@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.stereotype.Service;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.entity.LibraryEventEntity;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.jpa.LibraryEventsJpaRepository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,18 +23,22 @@ public class LibraryEventsService {
     private LibraryEventsJpaRepository libraryEventRepository;
 
     public void processLibraryEvent(ConsumerRecord<Integer, String> consumerRecord) throws JsonProcessingException {
-        LibraryEventEntity libraryEventEntity = objectMapper.readValue(consumerRecord.value(), LibraryEventEntity.class);
-        log.info("Library Event : {}", libraryEventEntity);
+        LibraryEventEntity libraryEvent = objectMapper.readValue(consumerRecord.value(), LibraryEventEntity.class);
+        log.info("Library Event : {}", libraryEvent);
 
-        switch (libraryEventEntity.getLibraryEventType()) {
+        if(libraryEvent != null && libraryEvent.getLibraryEventId() == 999){
+            throw new RecoverableDataAccessException("Temporary Network Issue");
+        }
+
+        switch (Objects.requireNonNull(libraryEvent).getLibraryEventType()) {
             case NEW:
-                save(libraryEventEntity);
+                save(libraryEvent);
                 //save operation
                 break;
             case UPDATE:
                 //validate
-                validate(libraryEventEntity);
-                save(libraryEventEntity);
+                validate(libraryEvent);
+                save(libraryEvent);
                 //update operation
                 break;
             default:

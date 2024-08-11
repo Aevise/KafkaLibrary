@@ -3,17 +3,25 @@ package pl.Aevise.Kafka_library_events_consumer.consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import configuration.DefaultAbstractKafkaProducerITConfiguration;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import pl.Aevise.Kafka_library_events_consumer.business.LibraryEventsService;
 import pl.Aevise.Kafka_library_events_consumer.domain.LibraryEventType;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.entity.BookEntity;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.entity.LibraryEventEntity;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.jpa.LibraryEventsJpaRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -27,6 +35,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static util.EntityFixtures.bookEntity1;
 
+@EmbeddedKafka(topics = {
+        "library-events", "library-events.RETRY", "library-events.DLT"
+            },
+        partitions = 3)
 class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguration {
 
     @SpyBean
@@ -38,6 +50,13 @@ class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguratio
     LibraryEventsJpaRepository libraryEventsJpaRepository;
     @Autowired
     ObjectMapper objectMapper;
+
+    @Value("${topics.retry}")
+    private String retryTopic;
+    @Value("${topics.dlt}")
+    private String deadLetterTopic;
+
+    private Consumer<Integer, String> consumer;
 
     @AfterEach
     void tearDown() {
@@ -116,5 +135,32 @@ class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguratio
         //then
         verify(libraryEventsConsumerSpy, times(1)).consumeRecord(isA(ConsumerRecord.class));
         verify(libraryEventsServiceSpy, times(1)).processLibraryEvent(isA(ConsumerRecord.class));
+    }
+
+    @Test
+    public void publishUpdateLibraryEventWithWrongValue() throws JsonProcessingException, ExecutionException, InterruptedException {
+        //given
+        String libraryEventId = "999";
+        String json = "{\"libraryEventId\":" + libraryEventId + ",\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":123,\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}";
+
+        //when
+        kafkaTemplate.sendDefault(json).get();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        latch.await(5, TimeUnit.SECONDS);
+
+        //then
+        verify(libraryEventsConsumerSpy, times(3)).consumeRecord(isA(ConsumerRecord.class));
+        verify(libraryEventsServiceSpy, times(3)).processLibraryEvent(isA(ConsumerRecord.class));
+
+        HashMap<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps("group1", "true", embeddedKafkaBroker));
+        consumer = new DefaultKafkaConsumerFactory<>(configs, new IntegerDeserializer(), new StringDeserializer()).createConsumer();
+        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, retryTopic);
+
+        ConsumerRecord<Integer, String> consumerRecord = KafkaTestUtils.getSingleRecord(consumer, retryTopic);
+        String receivedValue = consumerRecord.value();
+
+        System.out.println("consumer Records is : " + receivedValue);
+        assertEquals(json, receivedValue);
     }
 }
