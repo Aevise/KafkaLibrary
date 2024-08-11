@@ -17,7 +17,5 @@ public class LibraryEventsConsumerManualOffset implements AcknowledgingMessageLi
         log.info("Consumer Record: {}", consumerRecord);
         assert acknowledgment != null;
         acknowledgment.acknowledge();
-
-
     }
 }

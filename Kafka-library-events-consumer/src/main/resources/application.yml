@@ -5,6 +5,9 @@ topics:
   retry: 'library-events.RETRY'
   dlt: 'library-events.DLT'
 
+retryListener:
+  startup: true
+
 spring:
   kafka:
     template:
