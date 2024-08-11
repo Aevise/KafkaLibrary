@@ -20,6 +20,7 @@ import pl.Aevise.Kafka_library_events_consumer.business.LibraryEventsService;
 import pl.Aevise.Kafka_library_events_consumer.domain.LibraryEventType;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.entity.BookEntity;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.entity.LibraryEventEntity;
+import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.jpa.FailureRecordJpaRepository;
 import pl.Aevise.Kafka_library_events_consumer.infrastructure.db.jpa.LibraryEventsJpaRepository;
 
 import java.util.HashMap;
@@ -54,6 +55,8 @@ class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguratio
     LibraryEventsJpaRepository libraryEventsJpaRepository;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    FailureRecordJpaRepository failureRecordJpaRepository;
 
     @Value("${topics.retry}")
     private String retryTopic;
@@ -149,7 +152,30 @@ class LibraryEventsConsumerIT extends DefaultAbstractKafkaProducerITConfiguratio
 
         System.out.println("consumer Records is : " + receivedValue);
         assertEquals(json, receivedValue);
+    }
 
+    @Test
+    public void publishUpdateLibraryEventWithoutLibraryEvent_FailureRecord() throws JsonProcessingException, ExecutionException, InterruptedException {
+        //given
+        String bookId = "123";
+        String json = "{\"libraryEventId\":null,\"libraryEventType\":\"UPDATE\",\"book\":{\"bookId\":" + bookId + ",\"bookName\":\"Random Book\",\"bookAuthor\":\"Random Author\"}}";
+
+        //when
+        kafkaTemplate.sendDefault(json).get();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        latch.await(5, TimeUnit.SECONDS);
+
+        //then
+        verify(libraryEventsConsumerSpy, times(1)).consumeRecord(isA(ConsumerRecord.class));
+        verify(libraryEventsServiceSpy, times(1)).processLibraryEvent(isA(ConsumerRecord.class));
+
+        long count = failureRecordJpaRepository.count();
+        assertEquals(1, count);
+        failureRecordJpaRepository.findAll()
+                .forEach(failureRecordEntity -> {
+                    System.out.println("Failure record: " + failureRecordEntity);
+                });
     }
 
     @Test

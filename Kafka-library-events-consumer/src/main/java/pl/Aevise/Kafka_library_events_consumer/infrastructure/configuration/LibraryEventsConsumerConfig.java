@@ -1,6 +1,7 @@
 package pl.Aevise.Kafka_library_events_consumer.infrastructure.configuration;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,10 +13,13 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.ConsumerRecordRecoverer;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.util.backoff.FixedBackOff;
+import pl.Aevise.Kafka_library_events_consumer.business.FailureService;
+import pl.Aevise.Kafka_library_events_consumer.infrastructure.configuration.utils.RecordStatus;
 
 import java.util.List;
 
@@ -34,6 +38,9 @@ public class LibraryEventsConsumerConfig {
 
     @Autowired
     KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    FailureService failureService;
 
     @Value("${topics.retry}")
     private String retryTopic;
@@ -72,6 +79,22 @@ public class LibraryEventsConsumerConfig {
         );
     }
 
+    @SuppressWarnings("unchecked")
+    private ConsumerRecordRecoverer getConsumerRecordRecoverer() {
+        return (consumerRecord, e) -> {
+            var record = (ConsumerRecord<Integer, String>) consumerRecord;
+            if (e.getCause() instanceof RecoverableDataAccessException) {
+                //recovery logic
+                log.info("Inside Recovery");
+                failureService.saveFailedRecord(record, e, RecordStatus.RETRY.toString());
+            } else {
+                //non-recovery logic
+                log.info("Inside Non-Recovery");
+                failureService.saveFailedRecord(record, e, RecordStatus.DEAD.toString());
+            }
+        };
+    }
+
     public DefaultErrorHandler errorHandler() {
         //retry failed record twice, delay 1 second
         FixedBackOff fixedBackOff = new FixedBackOff(1000L, 2);
@@ -83,7 +106,8 @@ public class LibraryEventsConsumerConfig {
 
 
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(
-                publishingRecover(),
+                getConsumerRecordRecoverer(),
+//                publishingRecover(),
                 exponentialBackOff);
 
         setNotRetryableExceptions(errorHandler);
